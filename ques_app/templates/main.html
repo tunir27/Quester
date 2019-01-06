@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	{% load static %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Welcome to Quester</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+	<link href="{% static 'css/scrolling-nav.css' %}" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<!-- Run when the page is fully loaded including graphics. -->
+   </head>
+
+<body id="page-top" class="my-body">
+      <script>
+		  window.onload = function() {
+		  localStorage.removeItem("review_list");
+		  localStorage.removeItem("flag");
+		  localStorage.removeItem("ques_no");
+		  localStorage.removeItem("time_count");
+		};
+	  </script>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">Quester</a>
+      </div>
+    </nav>
+
+    <header class="bg-primary text-white my-header">
+      <div class="container text-center">
+        <h1 style="margin-top:5%">Welcome to Examination Portal</h1>
+      </div>
+    </header>
+
+    <section id="about">
+      <div class="container">
+        <div class="row my-label">
+          <div class="col-lg-8 mx-auto">
+		  </div>
+		</div>
+       </div>
+      </div>
+      <br>
+      <!--<button type="submit" name="submit" id="submit" class="btn btn-primary btn1" >Next</button>-->
+	<form method="post" name="form1" id="form1" action="">
+		{% csrf_token %}
+		<input type="hidden" id="auth" name="auth" value="0">
+		<button type="button" class="btn btn-primary btn-lg btn3d btn3d2" style="margin-left:500px; margin-top:150px"value="train" onclick="formsubmit(value);">Model Train</button></a>
+		<button type="button" value="exam" class="btn btn-primary btn-lg btn3d btn3d2" style="margin-left:100px ;margin-top:150px" onclick="formsubmit(value);">Take Final Test</button></a>
+    </section>
+	</form>
+	
+	<script>
+		function formsubmit(value) 
+		{
+			document.getElementById("auth").value = "1";
+			if(value=='train')
+			{
+				document.getElementById('form1').action = "/quester/train/";
+			}
+			if(value=='exam')
+			{
+				document.getElementById('form1').action = "/quester/exam/";
+			}
+				document.getElementById('form1').submit();
+		}
+	</script>
+
+    <!-- Footer -->
+    <footer class="py-5 bg-dark" style="  padding: 0 0 50px;margin-top:270px">
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+    <!-- Custom JavaScript for this theme -->
+    <script src="{% static 'js/scrolling-nav.js' %}"></script>
+
+</body>
+</html>

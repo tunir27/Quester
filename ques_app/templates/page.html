@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	{% load static %}
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<title>Welcome to Quester</title>
+
+	<!-- Bootstrap core CSS -->
+	<link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+<link href="{% static 'css/scrolling-nav.css' %}" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+	<!--Run when the page is fully loaded including graphics.-->
+ 
+<script>
+$( window ).load(function() {
+	var timeStart = new Date();
+  $(".btime").on('click', function() {
+    var timeEnd = new Date();
+    var timeDiff = timeEnd - timeStart;
+    document.getElementById("get_time").value = timeDiff;
+	var temp_time=JSON.parse(localStorage.getItem("time_count"));
+	if(temp_time!==null)
+	{
+		temp_time=temp_time+timeDiff;
+		localStorage.setItem("time_count", JSON.stringify(temp_time));
+	}
+	else
+	{
+		localStorage.setItem("time_count", JSON.stringify(timeDiff));
+	}
+	
+    //$("#time").html('Time Difference: ' + timeDiff + ' ms');
+  });
+  
+       var number = 0;
+          document.onclick = function(event){
+                number ++;
+				classlist=document.getElementsByClassName('form-check-label');
+				for (var i = 0; i < classlist.length; i++) 
+				{
+					if (classlist[i].contains(event.target))
+					number--;
+				}
+                document.getElementById("clicks").value = number;
+				//console.log("No of clicks",number);
+            }
+			
+		var temp_time=JSON.parse(localStorage.getItem("time_count"));
+		var time_left=3600000-Number(temp_time);
+		console.log(time_left)
+		
+		//var wait=setTimeout("document.QuesForm.submit();",time_left);
+		/*var x = setInterval(function() {
+		temp_counter=time_left;
+		document.getElementById("demo").innerHTML = temp_counter;
+		}, 1000);*/
+		
+		temp_counter=time_left;
+		var x = setInterval(function() {
+		/*sec=Math.round(temp_counter/1000);
+		min=Math.round(sec/60);
+		hr=Math.round(min/60);*/
+		 
+		sec =Math.floor((temp_counter / 1000) % 60);
+		min =Math.floor((temp_counter / (1000 * 60)) % 60);
+		hr = Math.floor((temp_counter / (1000 * 60 * 60))%24);
+		/*hr = (hr < 10) ? "0" + hr : hr;
+		min = (min < 10) ? "0" + min : min;
+		sec = (sec < 10) ? "0" + sec : sec;*/
+		 
+		final_time=hr.toString()+":"+min.toString()+":"+sec.toString();
+		document.getElementById("demo").innerHTML = final_time;
+		
+		temp_counter=temp_counter-1000;
+		}, 1000);
+	  
+	  setTimeout(function () {
+		var timeEnd = new Date();
+		var timeDiff = timeEnd - timeStart;
+		document.getElementById("get_time").value = timeDiff;
+		document.getElementById("clicks").value = number;
+		document.getElementById("exam_finished").value="1"
+		document.QuesForm.submit();
+		}, time_left);
+
+});
+</script>
+
+</head>
+<body id="page-top">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+		<div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="/main/">Quester</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+        </button>
+		<!--
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#about">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#services">Services</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#contact">Contact</a>
+            </li>
+          </ul>
+        </div>   -->
+      </div>
+    </nav>
+
+    <header class="bg-primary text-white my-header">
+      <div class="container text-center">
+        <h1 style="margin-top:5%">Welcome to Examination Portal</h1>
+      </div>
+    </header>
+	<p style="float:right;font-family:Comic Sans MS;font-size:130%;clear:right">Time Left</p>
+    <p id="demo" style="float:right;margin-top:-1%;clear:right;font-family:Comic Sans MS;font-size:130%"></p>
+    <section id="about">
+      <div class="container">
+		<div class="row my-label justify-content-start">
+		<div class="col-lg-12 mx-auto ">
+			
+			{% for entry in ques_item %}
+            <h2 id="q_no" style="font-size:1.9vw">Q.{{ques_no}} {{entry.question}}</h2>
+
+		<form id="QuesForm" name="QuesForm" method="POST" action="/quester/validate/">
+			{% csrf_token %}
+			<div class="form-group">
+	
+		<!--clicks counted:<span id='clicks' name='stu_clicks'>0</span>-->
+				<h1 id="time"></h1>
+			</div>
+		</div>
+          
+			<input type="hidden" id="clicks" name="stu_clicks" value="">
+			<input type="hidden" id="get_time" name="stu_time" value="">
+			<input type="hidden" id="exam_finished" name="exam_finished" value="0">
+          
+			<div class="container my-radio">
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="ans" id="exampleRadios1" value="A">
+					<label class="form-check-label " for="exampleRadios1">
+					A. {{entry.choice_1}}
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input justify-content-center" type="radio" name="ans" id="exampleRadios2" value="B">
+					<label class="form-check-label" for="exampleRadios2">
+					B. {{entry.choice_2}}
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="ans" id="exampleRadios3" value="C">
+					<label class="form-check-label" for="exampleRadios3">
+					C. {{entry.choice_3}}
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="ans" id="exampleRadios4" value="D">
+					<label class="form-check-label" for="exampleRadios4">
+					D. {{entry.choice_4}}
+				</label>
+				Answer {{entry.correct_ans}}
+				</div>
+					<script>
+					$(document).on("click", "input[name='ans']", function(){
+						thisRadio = $(this);
+						if (thisRadio.hasClass("imChecked")) {
+							thisRadio.removeClass("imChecked");
+							thisRadio.prop('checked', false);
+						} else { 
+							thisRadio.prop('checked', true);
+							thisRadio.addClass("imChecked");
+						};
+					})
+					</script>
+			   </div>
+		</div>
+		{% endfor %}
+        </div>
+
+      <br>
+		<!-- <button type="button" id='mark_review' name='mark_review' value="0" class="btn btn-primary btn2" onclick="clicker(value);">Mark for review</button> 
+		<button type="button" id='mark_review' class="btn btn-primary btn2" value="0" onclick="clicker(this);">Mark for review</button>   -->
+		<button type="button" id='mark_review'  value="0"   class="one btn btn-primary btn-lg btn3d btn3d_new" onclick="clicker(this);">Mark for review</button>
+		<button type="submit" value="0" id="submit1" name="mark_review" class="btn btn-primary btn-lg btn3d btn3d2 btime" onclick="review_storer();">Submit</button>
+		<!--    <button type="submit" value="0" id="submit" name="mark_review" class="btn btn-primary btn1">Submit</button>     -->
+      <!--<button type="submit" name="submit" id="submit" class="btn btn-primary btn1" >Next</button>-->
+	  <!-- <input id='mark_review' type='button' name = 'mark_review' value="0" onclick="clicker(value);"/> -->
+	  
+	  
+	  <script>
+	  function clicker(value1)
+	  {
+		if(value1.value=="0")
+		{
+			document.getElementById("mark_review").value="1"
+			document.getElementById("submit1").value="1"
+			document.getElementById("mark_review").style.backgroundColor="#79589F"
+			document.getElementById("mark_review").style.color="white"
+		}
+		else 
+		{
+			document.getElementById("mark_review").value="0"
+			document.getElementById("submit1").value="0"
+			document.getElementById("mark_review").style.backgroundColor="white"
+			document.getElementById("mark_review").style.color="black"
+		}
+		
+	  }
+	  </script>
+    </section>
+	
+	<form name="QuesChangeForm" method="POST" action="/quester/validate/">
+	<div>
+		<div class="container" style="background:#ccccc0;border-radius:25px;margin-top:-2%;">
+			<p style="font-family:Comic Sans MS;font-size:150%;font-style:bold">Question List</p>
+			{% for i in counter %}
+			{% csrf_token %}
+			<button style="margin-left:5%;margin-top:2%" id="cb{{i}}" type="submit" value="{{i}}" name="ques_no" class="btn btime btn-primary btn-lg btn3d btn3d_new one" onclick="review_storer(name,value);">{{forloop.counter}}</button>
+			<!-- 	<button id="cb1"type="submit" value="1" name="ques_no" class="btn" onclick="review_storer(name,value);">2</button>
+				<button id="cb2"type="submit" value="2" name="ques_no" class="btn" onclick="review_storer(name,value);">3</button>
+				<button id="cb3"type="submit" value="3" name="ques_no" class="btn">4</button>
+				<button type="submit" value="4" name="ques_no" class="btn">5</button>
+				<button type="submit" value="5" name="ques_no" class="btn">6</button> -->
+			{% endfor %}
+	 </form>
+		 </div>
+	 </div>
+
+
+
+<!-- <script>
+		var temp_time=JSON.parse(localStorage.getItem("time_count"));
+		var time_left=180000-Number(temp_time);
+		console.log(time_left);
+		temp_counter=time_left;
+		var x = setInterval(function() {
+		temp_counter=temp_counter-1000;
+		document.getElementById("demo").innerHTML = temp_counter;
+		}, 1000);
+</script> -->
+
+  <script>
+	window.onload = function() {
+	var temp=JSON.parse(localStorage.getItem("review_list"));
+	if(temp==null)
+	{
+		return
+	}
+	for(i=0;i<=temp.length;i++)
+	{
+		if(temp[i]=="1")
+		{
+			document.getElementById("cb"+i.toString()).style.backgroundColor="#79589F"
+			document.getElementById("cb"+i.toString()).style.color="white"
+		}
+	}
+	var ques_no=JSON.parse(localStorage.getItem("ques_no"));
+	/*if(ques_no)
+	{
+		var element = document.getElementById("q_no");
+		element.parentNode.removeChild(element);
+		    //var html = '<h2 id="q_no" style="font-size:1.9vw">Q. {{entry.question}}</h2>;
+    //addElement('files', 'p', 'file-' + fileId, html);
+	}*/
+	if(ques_no!=null)
+	{
+		var ans_list="{{ans_list|safe}}";
+		var ans_list=ans_list.replace("[","").replace("]","").split(",");
+		//console.log(ans_list[ques_no])
+		if(ans_list[ques_no]!='0')
+		{
+			//console.log(ans_list[ques_no]);
+			if(ans_list[ques_no]=="'A'"||ans_list[ques_no]==" 'A'")
+			{
+				var d = document.getElementById("exampleRadios1");
+				d.classList.add("imChecked");
+				d.checked = true;
+			}
+			else if(ans_list[ques_no]==" 'B'"||ans_list[ques_no]=="'B'")
+			{
+				var d = document.getElementById("exampleRadios2");
+				d.classList.add("imChecked");
+				d.checked = true;
+			}
+			else if(ans_list[ques_no]==" 'C'"||ans_list[ques_no]=="'C'")
+			{
+				var d = document.getElementById("exampleRadios3");
+				d.classList.add("imChecked");
+				d.checked = true;
+			}
+			else if(ans_list[ques_no]==" 'D'"||ans_list[ques_no]=="'D'")
+			{
+				var d = document.getElementById("exampleRadios4");
+				d.classList.add("imChecked");
+				d.checked = true;
+			}
+			else
+			{
+			
+			}
+		}
+		if(temp[Number(ques_no)]=="1")
+		{
+			document.getElementById("mark_review").value="1"
+			document.getElementById("mark_review").style.backgroundColor="#79589F";
+			document.getElementById("mark_review").style.color="white";
+		}
+		{% for i in ques_item %}
+			var question="{{i.question}}";
+		{% endfor %}
+		document.getElementById("q_no").innerHTML="Q."+(ques_no+1).toString() +" "+ question;
+		
+	}
+  };
+  </script>
+	
+	<script>
+	function review_storer(name=false,value=false)
+	{
+		if(name=="ques_no")
+		{
+			localStorage.setItem("flag", "1");
+			localStorage.setItem("ques_no", value);
+			return
+		}
+		var flag=JSON.parse(localStorage.getItem("flag"));
+		console.log(flag)
+		if(flag=="1")
+		{
+			localStorage.removeItem("flag");
+			//localStorage.removeItem("ques_no");
+			var temp=JSON.parse(localStorage.getItem("review_list"));
+			var ques_no=JSON.parse(localStorage.getItem("ques_no"));
+			if(temp==null)
+			{
+				var temp=[];
+			}
+			temp[Number(ques_no)]=document.getElementById("mark_review").value;
+			localStorage.setItem("review_list", JSON.stringify(temp));
+			localStorage.removeItem("ques_no");
+		}
+		else
+		{
+			var temp=JSON.parse(localStorage.getItem("review_list"));
+			if(temp==null)
+			{
+				var temp=[];
+			}
+			temp.push(document.getElementById("mark_review").value);
+			localStorage.setItem("review_list", JSON.stringify(temp));
+		}
+	}
+	</script>
+	
+    <!-- Footer -->
+    <footer class="bg-dark " style="  padding: 0 0 50px;margin-top:160px">
+      
+      <!-- /.container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+    <!-- Custom JavaScript for this theme -->
+    <script src="{% static 'js/scrolling-nav.js' %}"></script>
+
+</body>
+</html>
